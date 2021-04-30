@@ -1,0 +1,19 @@
+2021/04/30-17:03:02.096 b98 Reusing MANIFEST C:\Users\alex_\mygit\fb_invite\chrome-data\Default\Local Storage\leveldb/MANIFEST-000001
+2021/04/30-17:03:02.097 b98 Recovering log #13
+2021/04/30-17:03:02.101 b98 Level-0 table #16: started
+2021/04/30-17:03:02.111 b98 Level-0 table #16: 749235 bytes OK
+2021/04/30-17:03:02.112 b98 Recovering log #16
+2021/04/30-17:03:02.112 b98 Reusing old log C:\Users\alex_\mygit\fb_invite\chrome-data\Default\Local Storage\leveldb/000016.log 
+2021/04/30-17:03:02.114 b98 Delete type=0 #13
+2021/04/30-17:03:02.114 b98 Delete type=2 #17
+2021/04/30-17:03:02.115 7458 Compacting 4@0 + 0@1 files
+2021/04/30-17:03:02.134 7458 Generated table #17@0: 227 keys, 751011 bytes
+2021/04/30-17:03:02.134 7458 Compacted 4@0 + 0@1 files => 751011 bytes
+2021/04/30-17:03:02.136 7458 compacted to: files[ 0 1 1 0 0 0 0 ]
+2021/04/30-17:03:02.137 7458 Delete type=2 #7
+2021/04/30-17:03:02.137 7458 Delete type=2 #10
+2021/04/30-17:03:02.137 7458 Delete type=2 #14
+2021/04/30-17:03:02.137 7458 Delete type=2 #16
+2021/04/30-17:17:54.849 5a68 Level-0 table #19: started
+2021/04/30-17:17:54.855 5a68 Level-0 table #19: 748643 bytes OK
+2021/04/30-17:17:54.857 5a68 Delete type=0 #16
