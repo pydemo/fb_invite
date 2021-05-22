@@ -1,0 +1,32 @@
+{
+    "frameSize": [
+        "1500",
+        "1000"
+    ],
+    "framePosition": [
+        "50",
+        "50"
+    ],
+    "ErrDlg": {
+        "size": [
+            697,
+            800
+        ],
+        "pos": [
+            175,
+            140
+        ]
+    },
+    "REST":{ 
+      "http": {
+        "WSDL_URL"  : "http://www.maslablink.com/OrthoAPI/OrthoAPIService.asmx?WSDL",
+        "WSDL_USER" : "90138COM",
+        "WSDL_PWD"  : "ORTHO_ECONNECT"
+        },
+      "https": {
+        "WSDL_URL"  : "http://www.maslablink.com/OrthoAPI/OrthoAPIService.asmx?WSDL",
+        "WSDL_USER" : "90138COM",
+        "WSDL_PWD"  : "ORTHO_ECONNECT"
+        }
+    }
+}

@@ -1,0 +1,37 @@
+$ sudo apt-get update
+$ sudo apt-get install python3.6
+
+
+sudo apt-get install software-properties-common
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt-get install python3.6
+
+
+command -v pip
+
+command -v pip3
+
+
+
+wget https://www.python.org/ftp/python/3.7.1/Python-3.7.1.tgz
+
+
+tar -xvf Python-3.7.1.tgz
+sudo apt-get install gcc
+cd Python-3.7.1
+./configure
+
+sudo apt-get install make
+sudo apt install zlib1g-dev
+
+sudo apt-get install libffi-dev
+
+sudo apt-get install build-essential libssl-dev libffi-dev python-dev
+
+sudo apt install python3-pip
+
+sudo apt install -y python3-venv
+
+python3 -m venv sample_environment
+sudo apt install build-essential

@@ -1,0 +1,29 @@
+mkdir ~/glibc-install; cd ~/glibc-install
+wget http://ftp.gnu.org/gnu/glibc/glibc-2.17.tar.gz
+tar -zxvf glibc-2.17.tar.gz
+cd glibc-2.17
+mkdir build
+cd build
+../configure --prefix=/home/ubuntu/opt/glibc-2.17  # <-- where you install new glibc
+make -j 2  # You can find your <number of CPU Cores> by using **nproc** command
+make install
+
+
+../configure  \
+    --prefix=/home/ubuntu/opt/glibc-2.17/          \
+    --libexecdir=/home/ubuntu/lib/glibc-2.17
+	
+	
+	
+	
+	
+
+mkdir ~/glibc-install; cd ~/glibc-install
+wget http://ftp.gnu.org/gnu/glibc/glibc-2.2.5.tar.gz	
+tar -zxvf glibc-2.17.tar.gz
+cd glibc-2.17
+mkdir build
+cd build
+../configure --prefix=/home/ubuntu/build/glibc  # <-- where you install new glibc
+make -j 2  # You can find your <number of CPU Cores> by using **nproc** command
+make install

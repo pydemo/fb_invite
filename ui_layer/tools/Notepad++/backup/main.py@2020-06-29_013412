@@ -1,0 +1,61 @@
+__author__ = "Alex Buzunov"
+__copyright__ = "Copyright 2019, HOME"
+__credits__ = []
+__appname__='DQ'
+__license__ = "MIT"
+__title__ = "DQ Manager"
+__version__ = "1.0.1"
+__maintainer__ = "Alex Buzunov"
+__email__ = "alex.buzunov@home.com"
+__github__=	''
+__status__ = "Development"
+
+import os, sys
+import wx
+from wx import adv
+import wx.lib.newevent
+
+sys.path.append("../../../..") #hbo
+#from hbo.dq.ui.wxp.libs.pybusyframe import MyPyBusyFrame
+
+
+import wx.lib.newevent
+update_evt	=	(UpdateListEvent, EVT_UPDATE_LIST) 	= wx.lib.newevent.NewEvent()
+exit_evt	=	(ExitAppEvent, wxID_EVT_EXIT)		= wx.lib.newevent.NewCommandEvent()
+log_evt		=	(LogEvent, wxID_EVT_LOG)			= wx.lib.newevent.NewCommandEvent()
+pdf_log_evt	=	(PdfLogEvent, wxID_PDF_EVT_LOG)		= wx.lib.newevent.NewEvent()
+listener_log_evt	=	(ListenerLogEvent, wxID_LISTENER_EVT_LOG)		= wx.lib.newevent.NewEvent()
+
+import builtins
+builtins.update_evt = update_evt
+builtins.EVT_UPDATE_LIST=EVT_UPDATE_LIST
+builtins.log_evt = log_evt
+builtins.wxID_EVT_LOG=wxID_EVT_LOG
+builtins.exit_evt=exit_evt
+
+builtins.listener_log_evt = listener_log_evt
+builtins.wxID_LISTENER_EVT_LOG=wxID_LISTENER_EVT_LOG
+
+home=os.path.dirname(sys.argv[0])
+if not home :
+	home=os.path.dirname(os.path.abspath(__file__))
+
+
+builtins.home = home
+
+
+builtins.home = home
+builtins.wxID_PDF_EVT_LOG=wxID_PDF_EVT_LOG
+#  from hbo.dq.ui.wxp.libs.startupframe import LoggerFrame
+script_name=os.path.splitext(os.path.basename(__file__))[0]
+builtins.pid = os.getpid()
+builtins.home = home
+builtins.script_name=script_name
+
+if 1:
+	import  libs.init_job as init
+	ts, JOB_NAME, IMP_DATE, HOME, log,_ = init.init()
+	d=init.d
+	d['script']=''
+	ts_out_dir=init.ts_out_dir
+

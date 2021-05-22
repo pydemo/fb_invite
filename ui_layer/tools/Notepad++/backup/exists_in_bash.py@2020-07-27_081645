@@ -1,0 +1,38 @@
+case $string in (*foo*)
+  # Do stuff
+esac    
+
+[ -z "${_string_##*$_substring_*}" ] && echo 'Substring found!'
+or
+
+[ -n "${_string_##*$_substring_*}" ] || echo 'Substring found!'
+Another one:
+
+[ "${_string_##$_substring_}" != "$_string_" ] && echo 'Substring found!'
+or
+
+[ "${_string_##$_substring_}" = "$_string_" ] || echo 'Substring found!'
+
+if [[ "${str,,}" == *"yes"* ]] ;then
+Example 2, check for 'yes' in string (case insensitive):
+
+    if [[ "$(echo "$str" | tr '[:upper:]' '[:lower:]')" == *"yes"* ]] ;then 
+Example 3, check for 'yes' in string (case sensitive):
+
+     if [[ "${str}" == *"yes"* ]] ;then
+Example 4, check for 'yes' in string (case sensitive):
+
+     if [[ "${str}" =~ "yes" ]] ;then
+Example 5, exact match (case sensitive):
+
+     if [[ "${str}" == "yes" ]] ;then
+Example 6, exact match (case insensitive):
+
+     if [[ "${str,,}" == "yes" ]] ;then
+Example 7, exact match:
+
+     if [ "$a" = "$b" ] ;then
+Example 8, wildcard match .ext (case insensitive):
+
+     if echo "$a" | egrep -iq "\.(mp[3-4]|txt|css|jpg|png)" ; then
+     

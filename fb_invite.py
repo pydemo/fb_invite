@@ -1,18 +1,29 @@
-import os, sys
+import os, sys,  random
 from os.path import join, isdir, isfile, dirname
 from  time import sleep
 import pyperclip
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
+from ui_layer.utils import  cli_exception
 from pprint import pprint  as pp
 e=sys.exit
 
 chrome_options = Options()
 
 
+import cli_layer.config.app_config as app_config 
+if 1:
+    app_config.init(**dict(quiet=False))
+    apc = app_config.apc
+    apc.validate().load()
 
-
+import cli_layer.config.invited as invited
+if 1:
+    invited.init()
+    inv = invited.inv
+    inv.load()
+    
 
 options = Options()
 options.add_argument("--log-level=3")
@@ -56,7 +67,6 @@ if 0:
     
     
 
-url="https://m.facebook.com/alexbuzunovart"
 
 def save_creds(fn, data):
     dn=dirname(fn)
@@ -66,8 +76,8 @@ def save_creds(fn, data):
         os.remove(fn)
     with open(fn, 'w') as fh:
         fh.write(data)
-    
-if __name__=="__main__":
+@cli_exception  
+def main(url):
     if 1:
         driver = webdriver.Chrome(executable_path=driverpath,options=options)
         options.add_argument(f"user-data-dir={data_dir}")
@@ -83,28 +93,35 @@ if __name__=="__main__":
         url="https://m.facebook.com/pg/alexbuzunovart/posts/?ref=page_internal&mt_nav=0"
         driver.get(url)
         sleep(5) 
-    while True:
-        driver.find_element_by_tag_name('body').send_keys(Keys.PAGE_DOWN)
-        sleep(1)
-        try:
-            print('Trying: Go to likes...')
-            a=driver.find_element_by_xpath('/html/body/div[1]/div/div[4]/div/div[1]/div/div[3]/div/div[3]/div/div/article/footer/div[1]/div[1]/div[1]/a/div/div[1]/div').click()
-            print('Done: Go to likes')
-            break
-            
-            
-            
-        except:
-            print('Go to likes failed.')  
+    if 1:
+        
+        dtl=['/html/body/div[1]/div/div[4]/div/div[1]/div/div[3]/div/div[3]/div/div/article/footer/div[1]/div[1]/a/div/div[1]/div',
+        '/html/body/div[1]/div/div[4]/div/div[1]/div/div[3]/div/div[3]/div/div/article/footer/div[1]/div[1]/div[1]/a/div/div[1]/div']
+        for path in dtl:
+            driver.find_element_by_tag_name('body').send_keys(Keys.PAGE_DOWN)
             sleep(1)
-    sleep(5)   
-    try:
-        print('Trying: Open likes...')
-        a=driver.find_element_by_xpath('/html/body/div[1]/div/div[4]/div/div/div/div/div[2]/div/div/div[2]/a/div/div').click()
-        print('Done: Open likes')
-  
-    except Exception as ex:
-        print('Open failed.')  
+            try:
+                print('Trying: Go to likes...')
+                a=driver.find_element_by_xpath(path).click()
+                print('Done: Go to likes')
+                break
+            except:
+                print('Go to likes failed.')  
+                sleep(1)
+
+    sleep(2)   
+    ol=['/html/body/div[1]/div/div[4]/div/div/div/div/div[2]/div/div/div[2]/a/div/div',
+        '/html/body/div[1]/div/div[4]/div/div/div/div/div[2]/div/div/div[2]/a/div/div']
+    for path in ol:
+        try:
+            print('Trying: Open likes...')
+            a=driver.find_element_by_xpath(path).click()
+            print('Done: Open likes')
+            sleep(3)
+            break
+        except Exception as ex:
+            print('Open failed.') 
+            sleep(1)            
         
     try:
         print('Trying: Buttons ...')
@@ -149,7 +166,7 @@ if __name__=="__main__":
         btn=btns[0] 
         pp(btn)
         #pp(dir(btn))        
-
+        intv=30
         if 1:
             for i in range (7):
                 driver.find_element_by_tag_name('body').send_keys(Keys.PAGE_DOWN)
@@ -171,10 +188,12 @@ if __name__=="__main__":
                         #print(bid,'id', btn.id)  
                     if 'Invite' in btn.text:
                         try:
+                            
                             btn.click()
                             invited.append(btn)
                             print(bid, 'Click button: DONE')
-                            sleep(2)
+                            wait=random.randrange(intv,intv+10)
+                            sleep(wait)
                         except Exception as ex:
                             print(ex)
                             print(bid, 'Click button FAILED')
@@ -183,18 +202,47 @@ if __name__=="__main__":
     except Exception as ex:
         print(str(ex))
         print('type Buttons failed.') 
-
-    for p in range(150):
+    old=[]
+    for p in range(0,150):
         see=None
         try:
             print(p, 'Trying: See more...')
             #see=driver.find_element_by_xpath('/html/body/div[1]/div/div[4]/div/div/div/div/div[2]/div[1]/div[3]/a/div/div/div/strong/div')
             see=driver.find_element_by_xpath('/html/body/div[1]/div/div[4]/div/div/div/div/div[2]/div[1]/div[3]/a')
-            print (see, type(see))
-            #pp(dir(see))
+
+            href=see.get_attribute("href")
+            print(href)
+            hid= href.split('ft_ent_identifier=')[1].split('&')[0]
+            #print (href)
+            print(hid)
+            sids= href.split('shown_ids=')[1].split('&')[0]
+            #print(sids)
+            new=sids.split('%2C')
+            print(707070, len(new), len(old), len(new)- len(old))
+            #print('set:',  set(new)-set(old), set(old)-set(new))
+            newids= list(set(new)-set(old))
+
+            #print('NEW IDs count: ', len(newids))
+            inv.savePage(p, newids)
+            if 1:
+                new_sids = '%2C'.join(newids)
+                maxids= inv.getLatestPage()
+                #print(2222, maxids)
+                #break
+                
+                #new_sids = '%2C'.join(maxids)
+                url= 'https://m.facebook.com/ufi/reaction/profile/browser/fetch/?limit=50&shown_ids=%s&total_count=2621&ft_ent_identifier=1764142307092985&ref=page_internal' % new_sids
+                print('SET URL:' , url)
+                driver.execute_script("arguments[0].setAttribute('href','%s')" % url, see)
+                    
+                    
+            old=new
+            
             print(p, 'See more... DONE')
-        except:
+        except Exception as ex:
+            print(str(ex))
             print(p, 'See more... FAILED')
+            #raise
         assert see
         if 0:
             print('see text', see.text)
@@ -218,169 +266,25 @@ if __name__=="__main__":
             print(p, 'invited len: ', len(invited))
             print(p, 'to_inv len: ', len(toinv))
             for bid, btn in enumerate(toinv):
-                #print(bid,'value', btn.value_of_css_property('value') ) 
-                #if 1:
-                    #print(bid,'Button text', btn.text)
-                    #print(bid,'location_once_scrolled_into_view', btn.location_once_scrolled_into_view)
-                    #print(bid,'location', btn.location)
-                    #print(bid,'tag_name', btn.tag_name)
-                    #print(bid,'id', btn.id) 
                 try:
                     if 'Invite' in btn.text:
                         try:
                             btn.click()
                             invited.append(btn)
-                            print(bid, 'Click button: DONE')
-                            sleep(2)
+                            wait=random.randrange(intv,intv+10)
+                            print(bid, 'Click button 11: DONE', wait, 123)
+                            
+                            sleep(wait)
                         except Exception as ex:
                             print(ex)
                             print(bid, 'Click button FAILED') 
                 except Exception as ex:
                     print(str(ex))
                     print('Button.text failed.')                             
-    e()
-
-
-    try:
-        print('Trying: parent/child ...')
-        div=driver.find_elements_by_xpath('//*[@id="reaction_profile_browser"]')  
-        pp(div)
-        print(888, len(div))
-        child = div[0].find_elements_by_xpath('.//*')
-        
-        print(777, len(child))
-        print('parent/child DONE.') 
-    except Exception as ex:
-        print(str(ex))
-        print('parent/child FAILED.') 
-        
-        
-
-
-    try:
-        print('Trying: _4mo div  ...')
-        btns=driver.find_elements_by_class_name("_4mo")  
-        pp(btns)
-        print(444, len(btns))
-        print('Done: _4mo div ')
-        #pp(btns[0])
-        #pp(dir(btns[0]))
-    except Exception as ex:
-        print(str(ex))
-        print('_4mo div failed.')         
-
-    try:
-        print('Trying: value Buttons ...')
-        btns=driver.find_elements_by_xpath("//button[@value='Invite']")  
-        pp(btns)
-        print(222, len(btns))
-        print('Done: value Buttons ')
-    except Exception as ex:
-        print(str(ex))
-        print('value Buttons failed.') 
-    try:
-        print('Trying: xpath Buttons ...')
-        btns=driver.find_elements_by_xpath("//*[@value='Invite']")  
-        pp(btns)
-        print(333, len(btns))
-        print('Done: xpath Buttons ')
-    except Exception as ex:
-        print(str(ex))
-        print('xpath Buttons failed.')    
-        
-    e()
-    
-    try:
-        print('Trying: Pick an account...')
-        a=driver.find_element_by_xpath('/html/body/div/form[1]/div/div/div[2]/div/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div/div/div[1]/div/div/div/div[2]/div').click()
-    except:
-        print('Pick an account failed.')
-    
-    driver.set_window_size(1000, 1000)
-    a=None
-    while True:
-        sleep(2)
-        print('MS "All Apps"')
-        try:
-            a=driver.find_element_by_xpath('//*[@id="root"]/div/div[2]/div/div/div/div/div[3]/div/div/div/div/div/div[1]/div[3]/div/div/div/div/div/div/a')
-            break
-        except:
-            print('Trying...')
-    assert a
-    aws_url = a.get_attribute('href')
-    print(aws_url)
-    if 1:
-        driver.get(aws_url)
-        #sleep(2000)
-    if 1:
-        
-        while True:
-            sleep(2)
-            print('Accounts')
-            try:
-            
-                driver.find_element_by_xpath('/html/body/app/portal-ui/div/portal-dashboard/portal-application-list/portal-application').click() 
-                break
-            except:
-                print('Trying...')
-        sleep(0.5)
-        
-
-        if 1: 
-            env='DEV'
-            print(f'Trying "{env}"')
-            driver.find_element_by_xpath('//*[@id="ins-6e94a0c3ed76b196"]/div/div/div/div[2]').click()
-            sleep(0.5)
-            print('Command line or programmatic access')
-            driver.find_element_by_xpath('/html/body/app/portal-ui/div/portal-dashboard/portal-application-list/sso-expander/portal-instance-list/div[1]/portal-instance/div/sso-expander/portal-profile-list/div/portal-profile/span/span/span[2]/a').click()
-            sleep(0.5)
-            if 1: 
-                print('"Windows" url')
-                try:
-                    driver.find_element_by_xpath('//*[@id="p-51c7c7674ed91244"]/sso-modal/div/div/div[2]/modal-content/div/div[3]/sso-tabs/ul/li[2]/a').click()
-                except:
-                    go = input("Continue?")
-                    if go=='y':
-                        pass
-                    else:
-                        raise
-                sleep(0.5)
-                print('Hove/Click/Copy')
-                driver.find_element_by_xpath('/html/body/app/portal-ui/div/portal-dashboard/portal-application-list/sso-expander/portal-instance-list/div[1]/portal-instance/div/sso-expander/portal-profile-list/div/portal-profile/span/span/span[2]/creds-modal/sso-modal/div/div/div[2]/modal-content/div/div[3]/sso-tabs/sso-tab[2]/div/div/div[2]/hover-to-copy/div').click()
-                sleep(0.5)
-                print(env)
-                data=pyperclip.paste()
-                if 1:
-                    fn=join('.creds',f'{env}.bat')
-                    save_creds(fn, data)
-                    print(f'"{env}" keys are save to "{fn}"')
-                print('Close popup')
-                driver.find_element_by_xpath('/html/body/app/portal-ui/div/portal-dashboard/portal-application-list/sso-expander/portal-instance-list/div[1]/portal-instance/div/sso-expander/portal-profile-list/div/portal-profile/span/span/span[2]/creds-modal/sso-modal/div/div/div[1]/span').click()
-                sleep(0.5)
-        
-        if 1: 
-            env='QA'
-            print(f'Trying "{env}"')
-            try:
-                driver.find_element_by_xpath('/html/body/app/portal-ui/div/portal-dashboard/portal-application-list/sso-expander/portal-instance-list/div[2]/portal-instance/div/div/div/div[2]').click()
-            except:
-                driver.find_element_by_xpath('/html/body/app/portal-ui/div/portal-dashboard/portal-application-list/sso-expander/portal-instance-list/div[2]/portal-instance/div/div/div/div[2]').click()
-            sleep(0.5)
-            print('Command line or programmatic access')
-            driver.find_element_by_xpath('/html/body/app/portal-ui/div/portal-dashboard/portal-application-list/sso-expander/portal-instance-list/div[2]/portal-instance/div/sso-expander/portal-profile-list/div/portal-profile/span/span/span[2]/a').click()
-            sleep(0.5)
-            if 1:
-                print('"Windows" url')
-                driver.find_element_by_xpath('/html/body/app/portal-ui/div/portal-dashboard/portal-application-list/sso-expander/portal-instance-list/div[2]/portal-instance/div/sso-expander/portal-profile-list/div/portal-profile/span/span/span[2]/creds-modal/sso-modal/div/div/div[2]/modal-content/div/div[3]/sso-tabs/ul/li[2]/a').click()
-                sleep(0.5)
-                print('Hove/Click/Copy')
-                driver.find_element_by_xpath('/html/body/app/portal-ui/div/portal-dashboard/portal-application-list/sso-expander/portal-instance-list/div[2]/portal-instance/div/sso-expander/portal-profile-list/div/portal-profile/span/span/span[2]/creds-modal/sso-modal/div/div/div[2]/modal-content/div/div[3]/sso-tabs/sso-tab[2]/div/div/div[2]/hover-to-copy/div').click()
-                sleep(0.5)
-                print(env)
-                data=pyperclip.paste()
-                if 1:
-                    fn=join('.creds',f'{env}.bat')
-                    save_creds(fn, data)
-                    print(f'"{env}" keys are save to "{fn}"')
+                    break
             
     driver.quit()
+if __name__=="__main__":
+    url="https://m.facebook.com/alexbuzunovart"
+
+    main(url)
