@@ -52,7 +52,7 @@ options.add_argument("--mute-audio")
 options.add_argument(f"--user-data-dir={data_dir}")
 
 
-did=90
+did=92
 driverpath = r".\driver\nt\chromedriver_%d.exe" % did
 if 0:
     data_dir=f'chrome-data-{did}'
@@ -93,36 +93,67 @@ def main(url):
         url="https://m.facebook.com/pg/alexbuzunovart/posts/?ref=page_internal&mt_nav=0"
         driver.get(url)
         sleep(5) 
-    if 1:
-        
+    top=True
+    if top:
+       
         dtl=['/html/body/div[1]/div/div[4]/div/div[1]/div/div[3]/div/div[3]/div/div/article/footer/div[1]/div[1]/a/div/div[1]/div',
-        '/html/body/div[1]/div/div[4]/div/div[1]/div/div[3]/div/div[3]/div/div/article/footer/div[1]/div[1]/div[1]/a/div/div[1]/div']
-        for path in dtl:
+        '/html/body/div[1]/div/div[4]/div/div[1]/div/div[3]/div/div[3]/div/div/article/footer/div[1]/div[1]/div[1]/a/div/div[1]/div',
+        '/html/body/div[1]/div/div[3]/div/div[1]/div/div[3]/div/div[3]/div/div/article/footer/div[1]/div[1]/a/div/div[1]/div']
+        for pid, path in enumerate(dtl):
             driver.find_element_by_tag_name('body').send_keys(Keys.PAGE_DOWN)
             sleep(1)
             try:
-                print('Trying: Go to likes...')
+                print(pid,'Trying: Go to likes...')
+                a=driver.find_element_by_xpath(path).click()
+                print(pid,'Done: Go to likes')
+                break
+            except:
+                print(pid, 'Go to likes failed.')  
+                sleep(1)
+    
+    else:
+        while True:
+            driver.find_element_by_tag_name('body').send_keys(Keys.PAGE_DOWN)
+            dtl=['/html/body/div[1]/div/div[4]/div/div[1]/div/div[3]/div/div[6]/div[6]/div[6]/div[2]/div/div/article/footer/div[1]/div[1]/a/div/div[1]/div']
+            path = dtl[0]
+                
+            sleep(1)
+            try:
+                print('Trying: Go to likes 1...')
                 a=driver.find_element_by_xpath(path).click()
                 print('Done: Go to likes')
                 break
             except:
                 print('Go to likes failed.')  
-                sleep(1)
+                #sleep(1)
 
-    sleep(2)   
-    ol=['/html/body/div[1]/div/div[4]/div/div/div/div/div[2]/div/div/div[2]/a/div/div',
-        '/html/body/div[1]/div/div[4]/div/div/div/div/div[2]/div/div/div[2]/a/div/div']
-    for path in ol:
-        try:
-            print('Trying: Open likes...')
-            a=driver.find_element_by_xpath(path).click()
-            print('Done: Open likes')
-            sleep(3)
-            break
-        except Exception as ex:
-            print('Open failed.') 
-            sleep(1)            
-        
+    sleep(2) 
+    if top:
+        ol=['/html/body/div[1]/div/div[4]/div/div/div/div/div[2]/div/div/div[2]/a/div/div',
+            '/html/body/div[1]/div/div[3]/div/div/div/div/div[2]/div/div/div[2]/a/div/div']
+        for path in ol:
+            try:
+                print('Trying: Open likes...')
+                a=driver.find_element_by_xpath(path).click()
+                print('Done: Open likes')
+                sleep(3)
+                break
+            except Exception as ex:
+                print('Open failed.') 
+                sleep(1)            
+    else:
+        ol=['/html/body/div[1]/div/div[4]/div/div/div/div/div[2]/div/div/div[2]/a/div/div']
+        for path in ol:
+            try:
+                print('Trying: Open likes 2...')
+                a=driver.find_element_by_xpath(path).click()
+                print('Done: Open likes')
+                sleep(3)
+                break
+            except Exception as ex:
+                print('Open failed.') 
+                sleep(1)            
+             
     try:
         print('Trying: Buttons ...')
         btns=browser.find_element_by_xpath('//button[text()="Invite"]')
@@ -207,9 +238,13 @@ def main(url):
         see=None
         try:
             print(p, 'Trying: See more...')
-            #see=driver.find_element_by_xpath('/html/body/div[1]/div/div[4]/div/div/div/div/div[2]/div[1]/div[3]/a/div/div/div/strong/div')
-            see=driver.find_element_by_xpath('/html/body/div[1]/div/div[4]/div/div/div/div/div[2]/div[1]/div[3]/a')
-
+            try:
+                see=driver.find_element_by_xpath('/html/body/div[1]/div/div[3]/div/div/div/div/div[2]/div[1]/div[3]/a/div/div/div/strong')
+            except:
+                print(1, 'See more... FAILED')
+            #seemore=['/html/body/div[1]/div/div[3]/div/div/div/div/div[2]/div[1]/div[3]/a/div/div/div/strong/div']
+                see=driver.find_element_by_xpath('/html/body/div[1]/div/div[4]/div/div/div/div/div[2]/div[1]/div[3]/a')
+                
             href=see.get_attribute("href")
             print(href)
             hid= href.split('ft_ent_identifier=')[1].split('&')[0]
@@ -244,12 +279,14 @@ def main(url):
             print(p, 'See more... FAILED')
             #raise
         assert see
-        if 0:
+        if 1:
+            print('see type', see)
             print('see text', see.text)
             print('location_once_scrolled_into_view', see.location_once_scrolled_into_view)
             print('location', see.location)
             print('tag_name', see.tag_name)
             print('id', see.id)  
+        
         see.click()
         print(p,'See click: DONE')
         

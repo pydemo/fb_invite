@@ -16,8 +16,8 @@ QC_DUMP_FN  = "qc_query_dump.csv"
 TEST_EVENT_DIR = 'test_event'
 IN_DIR      = 'in'
 OUT_DIR     = 'out'
-INCLUDE_DIR ='include'
-
+INCLUDE_DIR = 'include'
+CODE_DIR    = 'code_staging'
 SUCCESS = 0
 FAILURE = 1
 NODATA  = 3
